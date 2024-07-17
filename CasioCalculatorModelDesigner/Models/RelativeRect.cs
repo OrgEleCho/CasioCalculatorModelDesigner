@@ -15,5 +15,13 @@ namespace CasioCalculatorModelDesigner
 
         [ObservableProperty]
         private double _height;
+
+        public void NotifyAllChanged()
+        {
+            OnPropertyChanged(nameof(X));
+            OnPropertyChanged(nameof(Y));
+            OnPropertyChanged(nameof(Width));
+            OnPropertyChanged(nameof(Height));
+        }
     }
 }

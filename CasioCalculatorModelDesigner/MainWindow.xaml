@@ -65,16 +65,19 @@
                               VerticalAlignment="Center"
                               HorizontalAlignment="Center"
                               CornerRadius="3"
+                              RenderOptions.BitmapScalingMode="NearestNeighbor"
                               Visibility="{Binding CalculatorModel.InterfacePath,Converter={StaticResource StringIsNotNullOrWhiteSpaceToVisibilityConverter}}"
                               Source="{Binding CalculatorModel.InterfacePath,Converter={StaticResource StringToImageSourceConverter}}"
                               MouseDown="Image_MouseDown"
                               MouseMove="Image_MouseMove"
-                              MouseUp="Image_MouseUp">
+                              MouseUp="Image_MouseUp"
+                              SizeChanged="interfaceImage_SizeChanged">
                         <ws:Image.Effect>
                             <DropShadowEffect ShadowDepth="0"/>
                         </ws:Image.Effect>
                     </ws:Image>
-                    <ItemsControl ItemsSource="{Binding CalculatorModel.Buttons}"
+                    <ItemsControl Name="buttonsArea" 
+                                  ItemsSource="{Binding CalculatorModel.Buttons}"
                                   Width="{Binding ElementName=interfaceImage,Path=ActualWidth}"
                                   Height="{Binding ElementName=interfaceImage,Path=ActualHeight}"
                                   VerticalAlignment="Center"

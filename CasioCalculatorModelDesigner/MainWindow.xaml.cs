@@ -165,5 +165,13 @@ namespace CasioCalculatorModelDesigner
 
             StopAddCalculatorButton();
         }
+
+        private void interfaceImage_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            foreach (var button in CalculatorModel.Buttons)
+            {
+                button.NormalizedRect.NotifyAllChanged();
+            }
+        }
     }
 }
