@@ -1,0 +1,287 @@
+﻿<Window x:Class="CasioCalculatorModelDesigner.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CasioCalculatorModelDesigner"
+        xmlns:converters="clr-namespace:CasioCalculatorModelDesigner.Converters"
+        xmlns:ws="https://schemas.elecho.dev/wpfsuite"
+        mc:Ignorable="d"
+        Title="Casio Calculator Model Designer" Height="650" Width="640"
+        d:DataContext="{d:DesignInstance Type=local:MainWindow,IsDesignTimeCreatable=False}">
+
+    <Window.Resources>
+        <converters:StringToImageSourceConverter x:Key="StringToImageSourceConverter"/>
+        <converters:NormalizedToAbsoluteValueConverter x:Key="NormalizedToAbsoluteValueConverter"/>
+        <ws:ValueConverterGroup x:Key="StringIsNotNullOrWhiteSpaceToVisibilityConverter">
+            <ws:StringIsNotNullOrWhiteSpaceConverter/>
+            <ws:BooleanToVisibilityConverter/>
+        </ws:ValueConverterGroup>
+        <ws:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:NormalizedToAbsoluteValueConverter x:Key="NormalizedXToAbsoluteConverter"
+                                                       AbsoluteFullSize="{Binding ElementName=interfaceImage,Path=ActualWidth}"/>
+        <converters:NormalizedToAbsoluteValueConverter x:Key="NormalizedYToAbsoluteConverter"
+                                                       AbsoluteFullSize="{Binding ElementName=interfaceImage,Path=ActualHeight}"/>
+        <ws:ValueConverterGroup x:Key="NormalizedXToAbsoluteTextConverter">
+            <StaticResource ResourceKey="NormalizedXToAbsoluteConverter"/>
+            <converters:DoubleToStringConverter Format="0"/>
+        </ws:ValueConverterGroup>
+        <ws:ValueConverterGroup x:Key="NormalizedYToAbsoluteTextConverter">
+            <StaticResource ResourceKey="NormalizedYToAbsoluteConverter"/>
+            <converters:DoubleToStringConverter Format="0"/>
+        </ws:ValueConverterGroup>
+    </Window.Resources>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="{StaticResource StringFile}">
+                <MenuItem Header="{StaticResource StringOpen}"/>
+                <MenuItem Header="{StaticResource StringSave}"/>
+                <MenuItem Header="{StaticResource StringSaveAs}"/>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="3"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+
+            <ws:BoxPanel Name="designerArea">
+                <ws:BoxPanel Margin="14">
+                    <Border VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Width="{Binding ElementName=interfaceImage,Path=ActualWidth}"
+                            Height="{Binding ElementName=interfaceImage,Path=ActualHeight}"
+                            Visibility="{Binding IsAddingCalculatorButton,Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Background="White">
+                        <Border.Effect>
+                            <DropShadowEffect ShadowDepth="0"
+                                              BlurRadius="15"
+                                              Color="#95ec69"/>
+                        </Border.Effect>
+                    </Border>
+                    <ws:Image x:Name="interfaceImage"
+                              VerticalAlignment="Center"
+                              HorizontalAlignment="Center"
+                              CornerRadius="3"
+                              Visibility="{Binding CalculatorModel.InterfacePath,Converter={StaticResource StringIsNotNullOrWhiteSpaceToVisibilityConverter}}"
+                              Source="{Binding CalculatorModel.InterfacePath,Converter={StaticResource StringToImageSourceConverter}}"
+                              MouseDown="Image_MouseDown"
+                              MouseMove="Image_MouseMove"
+                              MouseUp="Image_MouseUp">
+                        <ws:Image.Effect>
+                            <DropShadowEffect ShadowDepth="0"/>
+                        </ws:Image.Effect>
+                    </ws:Image>
+                    <ItemsControl ItemsSource="{Binding CalculatorModel.Buttons}"
+                                  Width="{Binding ElementName=interfaceImage,Path=ActualWidth}"
+                                  Height="{Binding ElementName=interfaceImage,Path=ActualHeight}"
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ws:BoxPanel/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Canvas>
+                                    <ws:BoxPanel Canvas.Left="{Binding NormalizedRect.X,Mode=OneWay,Converter={StaticResource NormalizedXToAbsoluteConverter}}"
+                                                 Canvas.Top="{Binding NormalizedRect.Y,Mode=OneWay,Converter={StaticResource NormalizedYToAbsoluteConverter}}"
+                                                 Width="{Binding NormalizedRect.Width,Mode=OneWay,Converter={StaticResource NormalizedXToAbsoluteConverter}}"
+                                                 Height="{Binding NormalizedRect.Height,Mode=OneWay,Converter={StaticResource NormalizedYToAbsoluteConverter}}">
+                                        <Rectangle Fill="#88c2e1f5"/>
+                                    </ws:BoxPanel>
+                                </Canvas>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ws:BoxPanel>
+            </ws:BoxPanel>
+
+            <GridSplitter Grid.Column="1"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"/>
+
+            <ws:BoxPanel Name="editorMainArea"
+                         Grid.Column="2">
+                <ws:BoxPanel.Resources>
+                    <Style TargetType="ws:TextBox"
+                           BasedOn="{StaticResource {x:Type ws:TextBox}}">
+                        <Setter Property="Padding" Value="2"/>
+                    </Style>
+                    <Style TargetType="ws:Button"
+                           BasedOn="{StaticResource {x:Type ws:Button}}">
+                        <Setter Property="Padding" Value="4 2"/>
+                        <Setter Property="MinWidth" Value="38"/>
+                    </Style>
+                </ws:BoxPanel.Resources>
+
+                <ws:ScrollViewer>
+                    <ws:StackPanel Margin="12"
+                                   Spacing="8">
+                        <StackPanel>
+                            <TextBlock Text="{StaticResource StringModelName}"/>
+                            <ws:TextBox Text="{Binding CalculatorModel.ModelName,UpdateSourceTrigger=PropertyChanged}"
+                                        Placeholder="{StaticResource PlaceholderModelName}"/>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{StaticResource StringInterfacePath}"/>
+                            <ws:FlexPanel ws:MainSpacing="4">
+                                <ws:TextBox ws:FlexPanel.Grow="1"
+                                            Text="{Binding CalculatorModel.InterfacePath,UpdateSourceTrigger=PropertyChanged}"
+                                            Placeholder="{StaticResource PlaceholderInterfaceImageFilePath}"/>
+                                <ws:Button ws:FlexPanel.Shrink="0"
+                                           Content="{StaticResource StringOpen}"
+                                           Command="{Binding OpenInterfaceFileCommand}"/>
+                            </ws:FlexPanel>
+                        </StackPanel>
+                        <StackPanel>
+                            <TextBlock Text="{StaticResource StringRomPath}"/>
+                            <ws:FlexPanel ws:MainSpacing="4">
+                                <ws:TextBox ws:FlexPanel.Grow="1"
+                                            Text="{Binding CalculatorModel.RomPath,UpdateSourceTrigger=PropertyChanged}"
+                                            Placeholder="{StaticResource PlaceholderModelName}"/>
+                                <ws:Button ws:FlexPanel.Shrink="0"
+                                           Content="{StaticResource StringOpen}"
+                                           Command="{Binding OpenRomFileCommand}"/>
+                            </ws:FlexPanel>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="{StaticResource StringFlashPath}"/>
+                            <ws:FlexPanel ws:MainSpacing="4">
+                                <ws:TextBox ws:FlexPanel.Grow="1"
+                                            Text="{Binding CalculatorModel.FlashPath,UpdateSourceTrigger=PropertyChanged}"
+                                            Placeholder="{StaticResource PlaceholderFlashImageFilePath}"/>
+                                <ws:Button ws:FlexPanel.Shrink="0"
+                                           Content="{StaticResource StringOpen}"
+                                           Command="{Binding OpenFlashFileCommand}"/>
+                            </ws:FlexPanel>
+                        </StackPanel>
+
+                        <StackPanel>
+                            <TextBlock Text="{StaticResource StringScreenColor}"/>
+                            <ws:FlexPanel ws:MainSpacing="4">
+                                <Rectangle Width="30" d:Fill="DarkGreen">
+                                    <Rectangle.Fill>
+                                        <SolidColorBrush Color="{Binding CalculatorModel.ScreenColor}"/>
+                                    </Rectangle.Fill>
+                                </Rectangle>
+                                <ws:StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="R:"
+                                               VerticalAlignment="Center"/>
+                                    <ws:TextBox MinWidth="30"
+                                                Text="{Binding CalculatorModel.ScreenColorRed,UpdateSourceTrigger=PropertyChanged}"/>
+                                </ws:StackPanel>
+                                <ws:StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="G:"
+                                               VerticalAlignment="Center"/>
+                                    <ws:TextBox MinWidth="30"
+                                                Text="{Binding CalculatorModel.ScreenColorGreen,UpdateSourceTrigger=PropertyChanged}"/>
+                                </ws:StackPanel>
+                                <ws:StackPanel Orientation="Horizontal" Spacing="4">
+                                    <TextBlock Text="B:"
+                                               VerticalAlignment="Center"/>
+                                    <ws:TextBox MinWidth="30"
+                                                Text="{Binding CalculatorModel.ScreenColorBlue,UpdateSourceTrigger=PropertyChanged}"/>
+                                </ws:StackPanel>
+                            </ws:FlexPanel>
+                        </StackPanel>
+
+                        <ws:CheckBox Content="{StaticResource StringIsReadHardware}"/>
+
+                        <ws:GroupBox Header="{StaticResource StringButtons}"
+                                     MinHeight="100">
+                            <ws:StackPanel Margin="4" Spacing="4">
+                                <ws:ListBox x:Name="buttonListBox"
+                                            BorderThickness="0"
+                                            ItemsSource="{Binding CalculatorModel.Buttons}"
+                                            d:ItemsSource="{d:SampleData ItemCount=3}">
+                                    <ws:ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <ws:ConditionalControl Condition="{Binding RelativeSource={RelativeSource AncestorType=ws:ListBoxItem},Path=IsSelected}">
+                                                <ws:ConditionalControl.ContentWhenTrue>
+                                                    <ws:StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{StaticResource StringDisplayName}"/>
+                                                            <TextBlock Text=":"/>
+                                                            <TextBox Margin="4 0 0 0"
+                                                                     Text="{Binding DisplayName}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{StaticResource StringInputOutput}"/>
+                                                            <TextBlock Text=":"/>
+                                                            <TextBox Margin="4 0 0 0"
+                                                                     Text="{Binding InputOutput}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{StaticResource StringX}"/>
+                                                            <TextBlock Text=":"/>
+                                                            <TextBox Margin="4 0 0 0"
+                                                                     Text="{Binding NormalizedRect.X,Converter={StaticResource NormalizedXToAbsoluteTextConverter}}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{StaticResource StringY}"/>
+                                                            <TextBlock Text=":"/>
+                                                            <TextBox Margin="4 0 0 0"
+                                                                     Text="{Binding NormalizedRect.Y,Converter={StaticResource NormalizedYToAbsoluteTextConverter}}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{StaticResource StringW}"/>
+                                                            <TextBlock Text=":"/>
+                                                            <TextBox Margin="4 0 0 0"
+                                                                     Text="{Binding NormalizedRect.Width,Converter={StaticResource NormalizedXToAbsoluteTextConverter}}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{StaticResource StringH}"/>
+                                                            <TextBlock Text=":"/>
+                                                            <TextBox Margin="4 0 0 0"
+                                                                     Text="{Binding NormalizedRect.Height,Converter={StaticResource NormalizedYToAbsoluteTextConverter}}"/>
+                                                        </StackPanel>
+                                                    </ws:StackPanel>
+                                                </ws:ConditionalControl.ContentWhenTrue>
+                                                <ws:ConditionalControl.ContentWhenFalse>
+                                                    <ws:StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding DisplayName}"/>
+                                                            <TextBlock Text="{Binding InputOutput,StringFormat='({0})'}"/>
+                                                        </StackPanel>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBlock Text="{Binding NormalizedRect.X,StringFormat='0',Converter={StaticResource NormalizedXToAbsoluteConverter}}"/>
+                                                            <TextBlock Text="{Binding NormalizedRect.Y,StringFormat=', {0:0}',Converter={StaticResource NormalizedYToAbsoluteConverter}}"/>
+                                                            <TextBlock Text="{Binding NormalizedRect.Width,StringFormat=', {0:0}',Converter={StaticResource NormalizedXToAbsoluteConverter}}"/>
+                                                            <TextBlock Text="{Binding NormalizedRect.Height,StringFormat=', {0:0}',Converter={StaticResource NormalizedYToAbsoluteConverter}}"/>
+                                                        </StackPanel>
+                                                    </ws:StackPanel>
+                                                </ws:ConditionalControl.ContentWhenFalse>
+                                            </ws:ConditionalControl>
+                                        </DataTemplate>
+                                    </ws:ListBox.ItemTemplate>
+                                </ws:ListBox>
+                                <ws:StackPanel Orientation="Horizontal"
+                                               Spacing="4">
+                                    <ws:ConditionalControl Condition="{Binding IsAddingCalculatorButton}"
+                                                           HorizontalAlignment="Left">
+                                        <ws:ConditionalControl.ContentWhenFalse>
+                                            <ws:Button Content="{StaticResource StringAdd}"
+                                                       Command="{Binding StartAddCalculatorButtonCommand}"/>
+                                        </ws:ConditionalControl.ContentWhenFalse>
+                                        <ws:ConditionalControl.ContentWhenTrue>
+                                            <ws:Button Content="{StaticResource StringCancel}"
+                                                       Command="{Binding StopAddCalculatorButtonCommand}"/>
+                                        </ws:ConditionalControl.ContentWhenTrue>
+                                    </ws:ConditionalControl>
+                                    <ws:Button Content="{StaticResource StringDelete}"
+                                               Command="{Binding DeleteCalculatorButtonCommand}"
+                                               CommandParameter="{Binding ElementName=buttonListBox,Path=SelectedValue}"/>
+                                </ws:StackPanel>
+                            </ws:StackPanel>
+                        </ws:GroupBox>
+                    </ws:StackPanel>
+                </ws:ScrollViewer>
+            </ws:BoxPanel>
+        </Grid>
+    </DockPanel>
+</Window>

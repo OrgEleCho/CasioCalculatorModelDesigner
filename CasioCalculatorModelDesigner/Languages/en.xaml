@@ -1,0 +1,37 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="StringFile">File</sys:String>
+    <sys:String x:Key="StringOpen">Open</sys:String>
+    <sys:String x:Key="StringSave">Save</sys:String>
+    <sys:String x:Key="StringSaveAs">Save As</sys:String>
+    <sys:String x:Key="StringAdd">Add</sys:String>
+    <sys:String x:Key="StringDelete">Delete</sys:String>
+    <sys:String x:Key="StringCancel">Cancel</sys:String>
+
+    <!--Titles-->
+    <sys:String x:Key="StringModelName">Model Name</sys:String>
+    <sys:String x:Key="StringInterfacePath">Interface Path</sys:String>
+    <sys:String x:Key="StringRomPath">ROM Path</sys:String>
+    <sys:String x:Key="StringFlashPath">Flash Path</sys:String>
+    <sys:String x:Key="StringScreenColor">Screen Color</sys:String>
+    <sys:String x:Key="StringIsReadHardware">Is Real Hardware</sys:String>
+    <sys:String x:Key="StringButtons">Buttons</sys:String>
+    <sys:String x:Key="StringDisplayName">Display Name</sys:String>
+    <sys:String x:Key="StringInputOutput">Input Output</sys:String>
+    <sys:String x:Key="StringX">X</sys:String>
+    <sys:String x:Key="StringY">Y</sys:String>
+    <sys:String x:Key="StringW">W</sys:String>
+    <sys:String x:Key="StringH">H</sys:String>
+    <sys:String x:Key="StringPositionX">Position X</sys:String>
+    <sys:String x:Key="StringPositionY">Position Y</sys:String>
+    <sys:String x:Key="StringWidth">Width</sys:String>
+    <sys:String x:Key="StringHeight">Height</sys:String>
+    
+    <!--Placeholders-->
+    <sys:String x:Key="PlaceholderModelName">Model name</sys:String>
+    <sys:String x:Key="PlaceholderInterfaceImageFilePath">Interface image file path</sys:String>
+    <sys:String x:Key="PlaceholderRomImageFilePath">ROM file path</sys:String>
+    <sys:String x:Key="PlaceholderFlashImageFilePath">Flash file path</sys:String>
+    <sys:String x:Key="PlaceholderScreenColor">Screen color</sys:String>
+</ResourceDictionary>
