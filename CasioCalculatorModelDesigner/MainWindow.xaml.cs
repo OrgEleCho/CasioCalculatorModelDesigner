@@ -9,6 +9,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Accessibility;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Win32;
@@ -40,6 +41,8 @@ namespace CasioCalculatorModelDesigner
         };
 
         CalculatorButton? _currentAddingCalculatorButton;
+        double _startNormalizedX;
+        double _startNormalizedY;
 
         public MainWindow()
         {
@@ -103,7 +106,7 @@ namespace CasioCalculatorModelDesigner
             {
                 CalculatorModel.Buttons.Remove(calculatorButton);
             }
-            else
+            else if (CalculatorModel.Buttons.Count > 0)
             {
                 CalculatorModel.Buttons.RemoveAt(CalculatorModel.Buttons.Count - 1);
             }
@@ -118,6 +121,9 @@ namespace CasioCalculatorModelDesigner
 
             var relativePoint = e.GetPosition(element);
             var normalizedPoint = new Point(relativePoint.X / element.ActualWidth, relativePoint.Y / element.ActualHeight);
+
+            _startNormalizedX = normalizedPoint.X;
+            _startNormalizedY = normalizedPoint.Y;
 
             _currentAddingCalculatorButton = new CalculatorButton();
             _currentAddingCalculatorButton.DisplayName = $"Button{CalculatorModel.Buttons.Count + 1}";
@@ -141,8 +147,14 @@ namespace CasioCalculatorModelDesigner
             var relativePoint = e.GetPosition(element);
             var normalizedPoint = new Point(relativePoint.X / element.ActualWidth, relativePoint.Y / element.ActualHeight);
 
-            _currentAddingCalculatorButton.NormalizedRect.Width = normalizedPoint.X - _currentAddingCalculatorButton.NormalizedRect.X;
-            _currentAddingCalculatorButton.NormalizedRect.Height = normalizedPoint.Y - _currentAddingCalculatorButton.NormalizedRect.Y;
+            var leftTopNormalizedPoint = new Point(Math.Min(_startNormalizedX, normalizedPoint.X), Math.Min(_startNormalizedY, normalizedPoint.Y));
+            var rightBottomNormlaizedPoint = new Point(Math.Max(_startNormalizedX, normalizedPoint.X), Math.Max(_startNormalizedY, normalizedPoint.Y));
+
+            _currentAddingCalculatorButton.NormalizedRect.X = leftTopNormalizedPoint.X;
+            _currentAddingCalculatorButton.NormalizedRect.Y = leftTopNormalizedPoint.Y;
+            _currentAddingCalculatorButton.NormalizedRect.Width = rightBottomNormlaizedPoint.X - leftTopNormalizedPoint.X;
+            _currentAddingCalculatorButton.NormalizedRect.Height = rightBottomNormlaizedPoint.Y - leftTopNormalizedPoint.Y;
+
 
             Debug.WriteLine(_currentAddingCalculatorButton.NormalizedRect.Width);
 
@@ -171,6 +183,36 @@ namespace CasioCalculatorModelDesigner
             foreach (var button in CalculatorModel.Buttons)
             {
                 button.NormalizedRect.NotifyAllChanged();
+            }
+        }
+
+        private void NumberTextBox_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            if (sender is not TextBox textBox ||
+                !textBox.IsKeyboardFocused)
+                return;
+
+            if (int.TryParse(textBox.Text, out var intValue))
+            {
+                if (e.Delta > 0)
+                {
+                    textBox.Text = $"{intValue + 1}";
+                }
+                else
+                {
+                    textBox.Text = $"{intValue - 1}";
+                }
+            }
+            else if (double.TryParse(textBox.Text, out var doubleValue))
+            {
+                if (e.Delta > 0)
+                {
+                    textBox.Text = $"{doubleValue + 1}";
+                }
+                else
+                {
+                    textBox.Text = $"{doubleValue - 1}";
+                }
             }
         }
     }

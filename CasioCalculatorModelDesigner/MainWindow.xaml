@@ -76,7 +76,7 @@
                             <DropShadowEffect ShadowDepth="0"/>
                         </ws:Image.Effect>
                     </ws:Image>
-                    <ItemsControl Name="buttonsArea" 
+                    <ItemsControl Name="buttonsArea"
                                   ItemsSource="{Binding CalculatorModel.Buttons}"
                                   Width="{Binding ElementName=interfaceImage,Path=ActualWidth}"
                                   Height="{Binding ElementName=interfaceImage,Path=ActualHeight}"
@@ -206,42 +206,61 @@
                                         <DataTemplate>
                                             <ws:ConditionalControl Condition="{Binding RelativeSource={RelativeSource AncestorType=ws:ListBoxItem},Path=IsSelected}">
                                                 <ws:ConditionalControl.ContentWhenTrue>
-                                                    <ws:StackPanel>
+                                                    <ws:StackPanel Spacing="2">
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Text="{StaticResource StringDisplayName}"/>
                                                             <TextBlock Text=":"/>
                                                             <TextBox Margin="4 0 0 0"
+                                                                     MinWidth="40"
                                                                      Text="{Binding DisplayName}"/>
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal">
                                                             <TextBlock Text="{StaticResource StringInputOutput}"/>
                                                             <TextBlock Text=":"/>
                                                             <TextBox Margin="4 0 0 0"
+                                                                     MinWidth="40"
                                                                      Text="{Binding InputOutput}"/>
                                                         </StackPanel>
                                                         <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{StaticResource StringX}"/>
-                                                            <TextBlock Text=":"/>
-                                                            <TextBox Margin="4 0 0 0"
-                                                                     Text="{Binding NormalizedRect.X,Converter={StaticResource NormalizedXToAbsoluteTextConverter}}"/>
-                                                        </StackPanel>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{StaticResource StringY}"/>
-                                                            <TextBlock Text=":"/>
-                                                            <TextBox Margin="4 0 0 0"
-                                                                     Text="{Binding NormalizedRect.Y,Converter={StaticResource NormalizedYToAbsoluteTextConverter}}"/>
-                                                        </StackPanel>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{StaticResource StringW}"/>
-                                                            <TextBlock Text=":"/>
-                                                            <TextBox Margin="4 0 0 0"
-                                                                     Text="{Binding NormalizedRect.Width,Converter={StaticResource NormalizedXToAbsoluteTextConverter}}"/>
-                                                        </StackPanel>
-                                                        <StackPanel Orientation="Horizontal">
-                                                            <TextBlock Text="{StaticResource StringH}"/>
-                                                            <TextBlock Text=":"/>
-                                                            <TextBox Margin="4 0 0 0"
-                                                                     Text="{Binding NormalizedRect.Height,Converter={StaticResource NormalizedYToAbsoluteTextConverter}}"/>
+                                                            <ws:UniformGrid Rows="4" Columns="1"
+                                                                            VerticalSpacing="2">
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{StaticResource StringX}"/>
+                                                                    <TextBlock Text=":"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{StaticResource StringY}"/>
+                                                                    <TextBlock Text=":"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{StaticResource StringW}"/>
+                                                                    <TextBlock Text=":"/>
+                                                                </StackPanel>
+                                                                <StackPanel Orientation="Horizontal">
+                                                                    <TextBlock Text="{StaticResource StringH}"/>
+                                                                    <TextBlock Text=":"/>
+                                                                </StackPanel>
+                                                            </ws:UniformGrid>
+                                                            <ws:UniformGrid Rows="4" Columns="1"
+                                                                            VerticalSpacing="2">
+                                                                
+                                                                <TextBox Margin="4 0 0 0"
+                                                                         MinWidth="40"
+                                                                         Text="{Binding NormalizedRect.X,Converter={StaticResource NormalizedXToAbsoluteTextConverter},UpdateSourceTrigger=PropertyChanged}"
+                                                                         PreviewMouseWheel="NumberTextBox_PreviewMouseWheel"/>
+                                                                <TextBox Margin="4 0 0 0"
+                                                                         MinWidth="40"
+                                                                         Text="{Binding NormalizedRect.Y,Converter={StaticResource NormalizedYToAbsoluteTextConverter},UpdateSourceTrigger=PropertyChanged}"
+                                                                         PreviewMouseWheel="NumberTextBox_PreviewMouseWheel"/>
+                                                                <TextBox Margin="4 0 0 0"
+                                                                         MinWidth="40"
+                                                                         Text="{Binding NormalizedRect.Width,Converter={StaticResource NormalizedXToAbsoluteTextConverter},UpdateSourceTrigger=PropertyChanged}"
+                                                                         PreviewMouseWheel="NumberTextBox_PreviewMouseWheel"/>
+                                                                <TextBox Margin="4 0 0 0"
+                                                                         MinWidth="40"
+                                                                         Text="{Binding NormalizedRect.Height,Converter={StaticResource NormalizedYToAbsoluteTextConverter},UpdateSourceTrigger=PropertyChanged}"
+                                                                         PreviewMouseWheel="NumberTextBox_PreviewMouseWheel"/>
+                                                            </ws:UniformGrid>
                                                         </StackPanel>
                                                     </ws:StackPanel>
                                                 </ws:ConditionalControl.ContentWhenTrue>
